@@ -1,0 +1,2 @@
+influxdb_client==1.21.0
+bleak~=0.12.1
