@@ -22,11 +22,10 @@ async def run(address):
 
 async def get_address():
     devices = await BleakScanner.discover()
-    address = ""
-    for d in devices:
+    for device in devices:
         if d.name == "STM32IONIS":
-            address = d.address
-    return address
+            return d.address
+    return ""
 
 address = ""
 while address == "" :
