@@ -3,8 +3,8 @@ import time
 
 from bleak import BleakClient
 from bleak.exc import BleakError
+from bleak import BleakScanner
 
-testing_address = "FC:F0:39:94:63:22"
 MODEL_NBR_UUID = "0000A001-0000-1000-8000-00805F9B34FB"
 
 
@@ -20,6 +20,18 @@ async def run(address):
         except BleakError as error:
             print(error)
 
+async def get_address():
+    devices = await BleakScanner.discover()
+    address = ""
+    for d in devices:
+        if d.name == "STM32IONIS":
+            address = d.address
+    return address
+
+address = ""
+while address == "" :
+    loop = asyncio.get_event_loop()
+    address = loop.run_until_complete(get_address())
 
 loop = asyncio.get_event_loop()
-loop.run_until_complete(run(testing_address))
+loop.run_until_complete(run(address))
