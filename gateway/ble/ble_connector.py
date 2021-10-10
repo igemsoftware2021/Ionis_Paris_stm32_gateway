@@ -1,5 +1,4 @@
 import asyncio
-import atexit
 import logging
 import time
 from typing import List
@@ -85,9 +84,10 @@ class BLEConnector:
         helper for finding BLE Device (Cant be called directly)
         :return:
         """
-        devices: List[BLEDevice] = await BleakScanner.discover(timeout=10)
-        for device in devices:
-            if device.name == device_name:
-                self.__address = device.address
-                return
-        self.__logger.info("No device found, retry...")
+        device_found = await BleakScanner.find_device_by_filter(
+            lambda device, ad: device.name and device.name == device_name
+        )
+        if device_found is not None:
+            self.__address = device_found.address
+        else:
+            self.__logger.info("No device found, retry...")
