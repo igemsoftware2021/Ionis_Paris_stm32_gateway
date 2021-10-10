@@ -1,6 +1,7 @@
 import asyncio
 import atexit
 import logging
+import time
 from typing import List
 
 from bleak import BleakScanner, BleakClient
@@ -21,8 +22,7 @@ class BLEConnector:
 
         self.__client = None
         self.__is_connect = False
-
-        atexit.register(self.__destroy)
+        self.__is_running = False
 
     def connect(self, device_name="STM32IONIS"):
         """
@@ -33,8 +33,9 @@ class BLEConnector:
         # connect with bleak client
         self.__logger.info("You are connected to our device")
         self.__is_connect = True
+        self.__is_running = True
 
-    async def __read_value_gatt(self, characteristics_uid="A000"):
+    async def __read_value_gatt(self, func_value_read, characteristics_uid):
         """
         Read value from connected board
         :param characteristics_uid: uid of value
@@ -42,13 +43,19 @@ class BLEConnector:
         """
         if self.__is_connect:
             async with BleakClient(self.__address) as client:
-                return client.read_gatt_char(BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid))
+                while self.__is_running:
+                    func_value_read(
+                        await client.read_gatt_char(
+                            BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid)
+                        )
+                    )
+                    time.sleep(1)
         raise NoConnectedDevice("Can't read value because not device connected")
 
-    def read_value_gatt(self, characteristics_uid="A000"):
+    def read_value_gatt(self, func_value_read, characteristics_uid):
         loop = asyncio.get_event_loop()
         # disconnect ble from device
-        loop.run_until_complete(self.__read_value_gatt(characteristics_uid))
+        loop.run_until_complete(self.__read_value_gatt(func_value_read, characteristics_uid))
 
     def __destroy(self):
         loop = asyncio.get_event_loop()

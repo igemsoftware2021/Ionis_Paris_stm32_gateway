@@ -15,5 +15,5 @@ class AmmeterConnector:
     def connect(self, device):
         self.__connector.connect(device)
 
-    def read_ammeter_value(self):
-        return self.__connector.read_value_gatt(AmmeterConnector.AMMETER_VALUE_UID)
+    def read_ammeter_value(self, func_read_value):
+        return self.__connector.read_value_gatt(func_read_value, AmmeterConnector.AMMETER_VALUE_UID)
