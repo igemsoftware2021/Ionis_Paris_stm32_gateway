@@ -12,7 +12,7 @@ def main():
     gateway_ammeter_influx = GatewayAmmeterInflux(
         "STM32IONIS",
         "http://127.0.0.1:8086",
-        "6iEQA6KT_6Ohr9zIONLcA-3NRZ-TMe7VrLr2Dt4EljLObtY4eXVvnOmMnOnbX3iiZKn6me99_qAyNyjRBvrp3w==",
+        "HDt88lLdX0RSWI9YuJXp8J5rwN6SDMCk391l6cqIfOJZzb6o7WgTcODDlh1pGPXuOxXOeQOWojb3xETRkgffag==",
         "Ionis_paris",
         "igem_bucket"
     )
