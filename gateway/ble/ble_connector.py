@@ -29,7 +29,7 @@ class BLEConnector:
         find and connect with device
         :return: void
         """
-        self.__find_device(device_name)
+        await self.__find_device(device_name)
         # connect with bleak client
         self.__client = BleakClient(self.__address)
         self.__logger.info("You are connected to our device")
@@ -60,14 +60,13 @@ class BLEConnector:
             self.__logger.info("Disconnect BLE Client")
             await self.__client.disconnect()
 
-    def __find_device(self, device_name):
+    async def __find_device(self, device_name):
         """
         find device to connect with
         :return:
         """
         self.__logger.info("Try to find device...")
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.__find_devices_address(device_name))
+        await self.__find_devices_address(device_name)
 
     async def __find_devices_address(self, device_name):
         """
