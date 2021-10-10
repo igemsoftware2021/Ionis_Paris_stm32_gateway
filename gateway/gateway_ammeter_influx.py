@@ -24,6 +24,8 @@ class GatewayAmmeterInflux:
     def read_ammeter_into_influx_forever(self):
         self.__ammeter_connector.read_ammeter_value(self.__post_ammeter_in_influx)
 
+
     def __post_ammeter_in_influx(self, ammeter):
+        #print(ammeter)
         point: Point = Point("ampere_measurement").field("ampere", ammeter)
         self.__write_api.write(self.__bucket, self.__org, point)
