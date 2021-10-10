@@ -51,7 +51,7 @@ class BLEConnector:
                                 )
                             )
                             time.sleep(1)
-                except BleakError as error:
+                except Exception as error:
                     print(error)
 
         raise NoConnectedDevice("Can't read value because not device connected")
