@@ -26,6 +26,5 @@ class GatewayAmmeterInflux:
 
 
     def __post_ammeter_in_influx(self, ammeter):
-        #print(ammeter)
         point: Point = Point("ampere_measurement").field("ampere", ammeter)
         self.__write_api.write(self.__bucket, self.__org, point)

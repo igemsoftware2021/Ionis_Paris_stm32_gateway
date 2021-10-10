@@ -3,7 +3,7 @@ import logging
 import time
 from typing import List
 
-from bleak import BleakScanner, BleakClient
+from bleak import BleakScanner, BleakClient, BleakError
 from bleak.backends.device import BLEDevice
 
 from gateway.ble.no_connected_device import NoConnectedDevice
@@ -41,14 +41,19 @@ class BLEConnector:
         :return: value of resource
         """
         if self.__is_connect:
-            async with BleakClient(self.__address) as client:
-                while self.__is_running:
-                    func_value_read(
-                        await client.read_gatt_char(
-                            BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid)
-                        )
-                    )
-                    time.sleep(1)
+            while self.__is_running:
+                try:
+                    async with BleakClient(self.__address) as client:
+                        while self.__is_running:
+                            func_value_read(
+                                await client.read_gatt_char(
+                                    BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid)
+                                )
+                            )
+                            time.sleep(1)
+                except BleakError as error:
+                    print(error)
+
         raise NoConnectedDevice("Can't read value because not device connected")
 
     def read_value_gatt(self, func_value_read, characteristics_uid):
