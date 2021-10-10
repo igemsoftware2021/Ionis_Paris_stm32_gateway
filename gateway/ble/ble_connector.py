@@ -31,22 +31,24 @@ class BLEConnector:
         """
         self.__find_device(device_name)
         # connect with bleak client
-        self.__client = BleakClient(self.__address)
         self.__logger.info("You are connected to our device")
         self.__is_connect = True
 
-    def read_value_gatt(self, characteristics_uid="A000"):
+    async def __read_value_gatt(self, characteristics_uid="A000"):
         """
         Read value from connected board
         :param characteristics_uid: uid of value
         :return: value of resource
         """
         if self.__is_connect:
-            loop = asyncio.get_event_loop()
-            return loop.run_until_complete(
-                self.__client.read_gatt_char(BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid))
-            )
+            async with BleakClient(self.__address) as client:
+                return client.read_gatt_char(BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid))
         raise NoConnectedDevice("Can't read value because not device connected")
+
+    def read_value_gatt(self, characteristics_uid="A000"):
+        loop = asyncio.get_event_loop()
+        # disconnect ble from device
+        loop.run_until_complete(self.__read_value_gatt(characteristics_uid))
 
     def __destroy(self):
         loop = asyncio.get_event_loop()
