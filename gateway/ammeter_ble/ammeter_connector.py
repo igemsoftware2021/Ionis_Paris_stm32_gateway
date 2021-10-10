@@ -12,8 +12,8 @@ class AmmeterConnector:
         self.__logger = logging.getLogger("AmmeterConnector")
         self.__connector: BLEConnector = connector
 
-    def connect(self, device):
-        self.__connector.connect(device)
+    async def connect(self, device):
+        await self.__connector.connect(device)
 
-    def read_ammeter_value(self):
-        return self.__connector.read_value_gatt(AmmeterConnector.AMMETER_VALUE_UID)
+    async def read_ammeter_value(self):
+        return await self.__connector.read_value_gatt(AmmeterConnector.AMMETER_VALUE_UID)

@@ -24,18 +24,18 @@ class GatewayAmmeterInflux:
         # is running
         self.__is_running = True
 
-    def __read_ammeter_into_influx(self):
-        ammeter_value = self.__ammeter_connector.read_ammeter_value()
+    async def __read_ammeter_into_influx(self):
+        ammeter_value = await self.__ammeter_connector.read_ammeter_value()
         self.__post_ammeter_in_influx(ammeter_value)
 
     def __post_ammeter_in_influx(self, ammeter):
         point: Point = Point("ampere_measurement").field("ampere", ammeter)
         self.__write_api.write(self.__bucket, self.__org, point)
 
-    def __read_ammeter_into_influx_forever(self):
-        self.__ammeter_connector.connect(self.__device_name)
+    async def __read_ammeter_into_influx_forever(self):
+        await self.__ammeter_connector.connect(self.__device_name)
         while self.__is_running:
-            self.__read_ammeter_into_influx()
+            await self.__read_ammeter_into_influx()
             time.sleep(1)
 
     def read_ammeter_into_influx_forever(self):
