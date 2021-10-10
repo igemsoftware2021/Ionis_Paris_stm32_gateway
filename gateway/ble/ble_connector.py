@@ -24,7 +24,7 @@ class BLEConnector:
 
         atexit.register(self.__destroy)
 
-    async def connect(self, device_name="STM32IONIS"):
+    def connect(self, device_name="STM32IONIS"):
         """
         find and connect with device
         :return: void
@@ -35,15 +35,17 @@ class BLEConnector:
         self.__logger.info("You are connected to our device")
         self.__is_connect = True
 
-    async def read_value_gatt(self, characteristics_uid="A000"):
+    def read_value_gatt(self, characteristics_uid="A000"):
         """
         Read value from connected board
         :param characteristics_uid: uid of value
         :return: value of resource
         """
         if self.__is_connect:
-            return await self.__client.read_gatt_char(BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid))
-
+            loop = asyncio.get_event_loop()
+            return loop.run_until_complete(
+                self.__client.read_gatt_char(BLEConnector.CHARACTERISTICS_DEFAULT_UID.format(characteristics_uid))
+            )
         raise NoConnectedDevice("Can't read value because not device connected")
 
     def __destroy(self):
